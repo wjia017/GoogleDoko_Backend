@@ -1,0 +1,42 @@
+import "reflect-metadata";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+import app from "./app";
+
+import {
+  appDataSource,
+} from "./config/database";
+
+const PORT =
+  Number(process.env.PORT) || 5000;
+
+const startServer = async (): Promise<void> => {
+  try {
+    await appDataSource.initialize();
+
+    console.log(
+      "MySQL database connected successfully."
+    );
+
+    app.listen(
+      PORT,
+      () => {
+        console.log(
+          `GoogleDoko API running on port ${PORT}`
+        );
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Failed to start the application."
+    );
+
+    console.error(error);
+
+    process.exit(1);
+  }
+};
+
+startServer();
