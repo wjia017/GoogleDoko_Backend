@@ -1,5 +1,7 @@
 import "reflect-metadata";
 
+import dotenv from "dotenv";
+
 import {
   DataSource,
 } from "typeorm";
@@ -17,15 +19,46 @@ import {
 } from "../entities/vendor-profile.entity";
 
 
-const DB_HOST = process.env.DB_HOST;
-const DB_PORT = process.env.DB_PORT;
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DATABASE = process.env.DB_DATABASE;
+/*
+|--------------------------------------------------------------------------
+| Load Environment Variables
+|--------------------------------------------------------------------------
+*/
 
+dotenv.config();
+
+
+/*
+|--------------------------------------------------------------------------
+| Database Environment Variables
+|--------------------------------------------------------------------------
+*/
+
+const DB_HOST =
+  process.env.DB_HOST;
+
+const DB_PORT =
+  process.env.DB_PORT;
+
+const DB_USERNAME =
+  process.env.DB_USERNAME;
+
+const DB_PASSWORD =
+  process.env.DB_PASSWORD;
+
+const DB_DATABASE =
+  process.env.DB_DATABASE;
+
+
+/*
+|--------------------------------------------------------------------------
+| Validate Database Configuration
+|--------------------------------------------------------------------------
+*/
 
 if (
   !DB_HOST ||
+  !DB_PORT ||
   !DB_USERNAME ||
   !DB_DATABASE
 ) {
@@ -35,14 +68,38 @@ if (
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| MySQL Port
+|--------------------------------------------------------------------------
+*/
+
+const databasePort =
+  Number(DB_PORT);
+
+if (
+  Number.isNaN(databasePort)
+) {
+  throw new Error(
+    "DB_PORT must be a valid number."
+  );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TypeORM Data Source
+|--------------------------------------------------------------------------
+*/
+
 export const appDataSource =
   new DataSource({
+
     type: "mysql",
 
     host: DB_HOST,
 
-    port:
-      Number(DB_PORT) || 3306,
+    port: databasePort,
 
     username: DB_USERNAME,
 
@@ -57,7 +114,14 @@ export const appDataSource =
       VendorProfile,
     ],
 
-  
+    /*
+     * IMPORTANT:
+     *
+     * Keep synchronize false.
+     *
+     * We do not want TypeORM automatically
+     * changing the existing GoogleDoko database.
+     */
     synchronize: false,
 
     logging: false,
