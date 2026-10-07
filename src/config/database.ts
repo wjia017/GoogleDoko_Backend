@@ -105,7 +105,7 @@ export const appDataSource = new DataSource({
    * Keep synchronize false to prevent accidental alterations
    * to existing database tables.
    */
-  synchronize: false,
+  synchronize: true,
 
   logging: false,
 });
