@@ -1,0 +1,73 @@
+import { appDataSource } from "../config/database";
+import { productRepository } from "../repository";
+import { initialCatalog } from "../data/catalog.data";
+
+/*
+|--------------------------------------------------------------------------
+| Seed Catalog Script
+|--------------------------------------------------------------------------
+*/
+
+const seedCatalog = async (): Promise<void> => {
+  try {
+    console.log("----------------------------------------");
+    console.log("GoogleDoko Product Catalog Seeder");
+    console.log("----------------------------------------");
+
+    console.log("Connecting to database...");
+    if (!appDataSource.isInitialized) {
+      await appDataSource.initialize();
+    }
+    console.log("Database connected successfully.");
+
+    let insertedCount = 0;
+    let skippedCount = 0;
+
+    for (const item of initialCatalog) {
+      const existing = await productRepository.findOne({
+        where: { id: item.id },
+      });
+
+      if (existing) {
+        skippedCount++;
+        continue;
+      }
+
+      const product = productRepository.create({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        weight: item.weight,
+        price: item.price,
+        rating: item.rating,
+        sold: item.sold,
+        origin: item.origin,
+        seller: item.seller,
+        image: item.image,
+        stock: item.stock ?? 100,
+        active: item.active ?? 1,
+        description: item.description ?? null,
+      });
+
+      await productRepository.save(product);
+      insertedCount++;
+    }
+
+    console.log("----------------------------------------");
+    console.log(`Seeding completed. Inserted: ${insertedCount}, Skipped: ${skippedCount}`);
+    console.log("----------------------------------------");
+  } catch (error) {
+    console.error("----------------------------------------");
+    console.error("Failed to seed catalog.");
+    console.error("----------------------------------------");
+    console.error(error);
+    process.exitCode = 1;
+  } finally {
+    if (appDataSource.isInitialized) {
+      await appDataSource.destroy();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
+seedCatalog();
