@@ -4,7 +4,7 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
 
@@ -12,66 +12,108 @@ import { User } from "./user.entity";
 
 @Entity("vendors")
 export class Vendor {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryColumn({
+    name: "user_id",
+    type: "int",
+  })
+  userId!: number;
 
-  @OneToOne(
-    () => User,
-    {
-      onDelete: "CASCADE",
-    }
-  )
+  @OneToOne(() => User, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({
-    name: "userId",
+    name: "user_id",
   })
   user!: User;
 
   @Column({
-    unique: true,
-  })
-  userId!: number;
-
-  @Column({
+    name: "business_name",
     type: "varchar",
-    length: 150,
+    length: 255,
   })
   businessName!: string;
 
   @Column({
+    name: "vendor_type",
+    type: "varchar",
+    length: 100,
+    default: "Local Farm",
+  })
+  vendorType!: string;
+
+  @Column({
+    type: "varchar",
+    length: 255,
+    default: "",
+  })
+  location!: string;
+
+  @Column({
+    type: "varchar",
+    length: 100,
+    default: "",
+  })
+  district!: string;
+
+  @Column({
+    type: "text",
+  })
+  address!: string;
+
+  @Column({
+    type: "varchar",
+    length: 100,
+  })
+  category!: string;
+
+  @Column({
+    name: "main_products",
+    type: "text",
+    nullable: true,
+  })
+  mainProducts?: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  description?: string;
+
+  @Column({
+    type: "varchar",
+    length: 500,
+    nullable: true,
+  })
+  photo?: string;
+
+  @Column({
+    name: "document_name",
     type: "varchar",
     length: 255,
     nullable: true,
   })
-  businessDescription?: string;
+  documentName?: string;
 
   @Column({
     type: "varchar",
-    length: 255,
+    length: 50,
+    default: "under_review",
   })
-  businessAddress!: string;
+  status!: string;
 
   @Column({
-    type: "varchar",
-    length: 20,
+    type: "text",
+    nullable: true,
   })
-  businessPhone!: string;
+  settings?: string;
 
-  @Column({
-    type: "boolean",
-    default: false,
+  @CreateDateColumn({
+    name: "created_at",
   })
-  isApproved!: boolean;
-
-  @Column({
-    type: "boolean",
-    default: true,
-  })
-  isActive!: boolean;
-
-  @CreateDateColumn()
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    nullable: true,
+  })
   updatedAt!: Date;
 }
-

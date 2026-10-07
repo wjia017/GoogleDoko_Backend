@@ -12,27 +12,27 @@ import {
   sendError,
 } from "../helpers/response.helper";
 
+import {
+  messages,
+} from "../helpers/message.helper";
 
 export const authorize = (
-  ...allowedRoles: UserRole[]
+  ...allowedRoles: (UserRole | string)[]
 ) => {
   return (
     req: Request,
     res: Response,
     next: NextFunction
   ): void => {
-   
     if (!req.user) {
       sendError(
         res,
         401,
-        "Authentication required."
+        messages.auth.authenticationRequired
       );
-
       return;
     }
 
-   
     if (
       !allowedRoles.includes(
         req.user.role as UserRole
@@ -41,15 +41,16 @@ export const authorize = (
       sendError(
         res,
         403,
-        "You do not have permission to access this resource."
+        messages.common.forbidden
       );
-
       return;
     }
 
-    
     next();
   };
 };
+
+export const adminOnly = authorize(UserRole.ADMIN, "admin");
+export const vendorOnly = authorize(UserRole.VENDOR, "vendor");
 
 export default authorize;

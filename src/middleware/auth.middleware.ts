@@ -21,8 +21,7 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ): void => {
-  const authorization =
-    req.headers.authorization;
+  const authorization = req.headers.authorization;
 
   if (
     !authorization ||
@@ -33,12 +32,10 @@ export const authenticate = (
       401,
       messages.auth.authenticationRequired
     );
-
     return;
   }
 
-  const token =
-    authorization.split(" ")[1];
+  const token = authorization.split(" ")[1];
 
   if (!token) {
     sendError(
@@ -46,13 +43,11 @@ export const authenticate = (
       401,
       messages.auth.authenticationRequired
     );
-
     return;
   }
 
   try {
-    const payload =
-      verifyToken(token);
+    const payload = verifyToken(token);
 
     req.user = {
       id: payload.userId,
@@ -67,4 +62,29 @@ export const authenticate = (
       messages.auth.authenticationRequired
     );
   }
+};
+
+export const optionalAuthenticate = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  const authorization = req.headers.authorization;
+
+  if (authorization && authorization.startsWith("Bearer")) {
+    const token = authorization.split(" ")[1];
+    if (token) {
+      try {
+        const payload = verifyToken(token);
+        req.user = {
+          id: payload.userId,
+          role: payload.role,
+        };
+      } catch {
+        // Ignore token errors for optional authentication
+      }
+    }
+  }
+
+  next();
 };

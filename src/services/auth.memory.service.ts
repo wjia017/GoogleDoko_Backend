@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
 import {
@@ -17,6 +16,7 @@ interface MemoryUser extends SafeUser {
 
 class AuthMemoryService {
   private users: MemoryUser[] = [];
+  private nextUserId = 1;
 
   async register(
     data: RegisterUserData
@@ -40,9 +40,9 @@ class AuthMemoryService {
     );
 
     const user: MemoryUser = {
-      id: crypto.randomUUID(),
-      firstName: data.firstName,
-      lastName: data.lastName,
+      id: this.nextUserId++,
+      firstName: data.firstName ?? data.fullName ?? "",
+      lastName: data.lastName ?? "",
       email: data.email,
       password: hashedPassword,
       role: "customer",
@@ -106,7 +106,7 @@ class AuthMemoryService {
   }
 
   async getCurrentUser(
-    userId: string
+    userId: number
   ): Promise<SafeUser> {
     const user = this.users.find(
       (item) => item.id === userId

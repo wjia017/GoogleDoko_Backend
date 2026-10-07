@@ -2,22 +2,25 @@ import "reflect-metadata";
 
 import dotenv from "dotenv";
 
-import {
-  DataSource,
-} from "typeorm";
+import { DataSource } from "typeorm";
 
 import {
   User,
-} from "../entities/user.entity";
-
-import {
   Address,
-} from "../entities/address.entity";
-
-import {
+  Vendor,
   VendorProfile,
-} from "../entities/vendor-profile.entity";
-
+  Product,
+  Order,
+  Cart,
+  Wishlist,
+  Review,
+  Coupon,
+  SupportMessage,
+  Subscriber,
+  PlatformSetting,
+  RewardLog,
+  PasswordReset,
+} from "../entities";
 
 /*
 |--------------------------------------------------------------------------
@@ -27,28 +30,17 @@ import {
 
 dotenv.config();
 
-
 /*
 |--------------------------------------------------------------------------
 | Database Environment Variables
 |--------------------------------------------------------------------------
 */
 
-const DB_HOST =
-  process.env.DB_HOST;
-
-const DB_PORT =
-  process.env.DB_PORT;
-
-const DB_USERNAME =
-  process.env.DB_USERNAME;
-
-const DB_PASSWORD =
-  process.env.DB_PASSWORD;
-
-const DB_DATABASE =
-  process.env.DB_DATABASE;
-
+const DB_HOST = process.env.DB_HOST;
+const DB_PORT = process.env.DB_PORT;
+const DB_USERNAME = process.env.DB_USERNAME;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_DATABASE = process.env.DB_DATABASE;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,17 +48,9 @@ const DB_DATABASE =
 |--------------------------------------------------------------------------
 */
 
-if (
-  !DB_HOST ||
-  !DB_PORT ||
-  !DB_USERNAME ||
-  !DB_DATABASE
-) {
-  throw new Error(
-    "Database environment variables are missing."
-  );
+if (!DB_HOST || !DB_PORT || !DB_USERNAME || !DB_DATABASE) {
+  throw new Error("Database environment variables are missing.");
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -74,17 +58,11 @@ if (
 |--------------------------------------------------------------------------
 */
 
-const databasePort =
-  Number(DB_PORT);
+const databasePort = Number(DB_PORT);
 
-if (
-  Number.isNaN(databasePort)
-) {
-  throw new Error(
-    "DB_PORT must be a valid number."
-  );
+if (Number.isNaN(databasePort)) {
+  throw new Error("DB_PORT must be a valid number.");
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -92,37 +70,42 @@ if (
 |--------------------------------------------------------------------------
 */
 
-export const appDataSource =
-  new DataSource({
+export const appDataSource = new DataSource({
+  type: "mysql",
 
-    type: "mysql",
+  host: DB_HOST,
 
-    host: DB_HOST,
+  port: databasePort,
 
-    port: databasePort,
+  username: DB_USERNAME,
 
-    username: DB_USERNAME,
+  password: DB_PASSWORD ?? "",
 
-    password:
-      DB_PASSWORD ?? "",
+  database: DB_DATABASE,
 
-    database: DB_DATABASE,
+  entities: [
+    User,
+    Address,
+    Vendor,
+    VendorProfile,
+    Product,
+    Order,
+    Cart,
+    Wishlist,
+    Review,
+    Coupon,
+    SupportMessage,
+    Subscriber,
+    PlatformSetting,
+    RewardLog,
+    PasswordReset,
+  ],
 
-    entities: [
-      User,
-      Address,
-      VendorProfile,
-    ],
+  /*
+   * Keep synchronize false to prevent accidental alterations
+   * to existing database tables.
+   */
+  synchronize: false,
 
-    /*
-     * IMPORTANT:
-     *
-     * Keep synchronize false.
-     *
-     * We do not want TypeORM automatically
-     * changing the existing GoogleDoko database.
-     */
-    synchronize: false,
-
-    logging: false,
-  });
+  logging: false,
+});

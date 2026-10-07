@@ -1,183 +1,63 @@
-import {
-  body,
-} from "express-validator";
+import { body } from "express-validator";
 
 /*
 |--------------------------------------------------------------------------
-| Customer / Vendor Registration Validation
+| Customer Registration Validation
 |--------------------------------------------------------------------------
 */
-
 export const registerValidator = [
-
-  body("firstName")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "First name is required."
-    )
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "First name is too long."
-    ),
-
-  body("lastName")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "Last name is required."
-    )
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "Last name is too long."
-    ),
-
   body("email")
     .trim()
     .notEmpty()
-    .withMessage(
-      "Email is required."
-    )
+    .withMessage("Email is required.")
     .isEmail()
-    .withMessage(
-      "Please provide a valid email address."
-    )
+    .withMessage("Please provide a valid email address.")
     .normalizeEmail(),
 
   body("password")
     .notEmpty()
-    .withMessage(
-      "Password is required."
-    )
-    .isLength({
-      min: 6,
-      max: 100,
-    })
-    .withMessage(
-      "Password must be between 6 and 100 characters."
-    ),
+    .withMessage("Password is required.")
+    .isLength({ min: 6, max: 100 })
+    .withMessage("Password must be between 6 and 100 characters."),
 
-  body("phone")
-    .optional()
-    .trim()
-    .isLength({
-      max: 20,
-    })
-    .withMessage(
-      "Phone number is too long."
-    ),
+  body().custom((b) => {
+    if (!b.firstName && !b.fullName) {
+      throw new Error("First name or full name is required.");
+    }
+    return true;
+  }),
+];
 
-  body("location")
-    .optional()
-    .trim()
-    .isLength({
-      max: 255,
-    })
-    .withMessage(
-      "Location is too long."
-    ),
+/*
+|--------------------------------------------------------------------------
+| Vendor Registration Validation
+|--------------------------------------------------------------------------
+*/
+export const registerVendorValidator = [
+  ...registerValidator,
+  body().custom((b) => {
+    const biz = b.businessName || b.vendor?.businessName;
+    if (!biz || !String(biz).trim()) {
+      throw new Error("Business or Farm name is required for vendor registration.");
+    }
+    return true;
+  }),
+];
 
-  /*
-  |--------------------------------------------------------------------------
-  | Initial / Default Delivery Address
-  |--------------------------------------------------------------------------
-  */
-
-  body("address")
-    .notEmpty()
-    .withMessage(
-      "Address information is required."
-    )
-    .isObject()
-    .withMessage(
-      "Address must be an object."
-    ),
-
-  body("address.fullName")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "Address full name is required."
-    )
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "Address full name is too long."
-    ),
-
-  body("address.phone")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "Address phone number is required."
-    )
-    .isLength({
-      max: 20,
-    })
-    .withMessage(
-      "Address phone number is too long."
-    ),
-
-  body("address.addressLine")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "Address line is required."
-    )
-    .isLength({
-      max: 255,
-    })
-    .withMessage(
-      "Address line is too long."
-    ),
-
-  body("address.city")
-    .trim()
-    .notEmpty()
-    .withMessage(
-      "City is required."
-    )
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "City is too long."
-    ),
-
-  body("address.district")
-    .optional()
-    .trim()
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "District is too long."
-    ),
-
-  body("address.province")
-    .optional()
-    .trim()
-    .isLength({
-      max: 100,
-    })
-    .withMessage(
-      "Province is too long."
-    ),
-
-  body("address.postalCode")
-    .optional()
-    .trim()
-    .isLength({
-      max: 20,
-    })
-    .withMessage(
-      "Postal code is too long."
-    ),
+/*
+|--------------------------------------------------------------------------
+| Admin Registration Validation
+|--------------------------------------------------------------------------
+*/
+export const registerAdminValidator = [
+  ...registerValidator,
+  body().custom((b) => {
+    const key = b.adminInviteKey || b.securityKey;
+    if (!key || !String(key).trim()) {
+      throw new Error("Master security key is required for admin onboarding.");
+    }
+    return true;
+  }),
 ];
 
 /*
@@ -185,24 +65,90 @@ export const registerValidator = [
 | Login Validation
 |--------------------------------------------------------------------------
 */
-
 export const loginValidator = [
+  body().custom((b) => {
+    const identifier = b.identifier || b.email || b.phone;
+    if (!identifier || !String(identifier).trim()) {
+      throw new Error("Email or phone number is required.");
+    }
+    if (!b.password || !String(b.password).trim()) {
+      throw new Error("Password is required.");
+    }
+    return true;
+  }),
+];
 
+/*
+|--------------------------------------------------------------------------
+| Password Reset Validation
+|--------------------------------------------------------------------------
+*/
+export const forgotPasswordValidator = [
   body("email")
     .trim()
     .notEmpty()
-    .withMessage(
-      "Email is required."
-    )
+    .withMessage("Email is required.")
     .isEmail()
-    .withMessage(
-      "Please provide a valid email address."
-    )
-    .normalizeEmail(),
+    .withMessage("Please provide a valid email address."),
+];
 
-  body("password")
+export const resetPasswordValidator = [
+  body("email")
+    .trim()
     .notEmpty()
-    .withMessage(
-      "Password is required."
-    ),
+    .withMessage("Email is required.")
+    .isEmail()
+    .withMessage("Please provide a valid email address."),
+
+  body("token")
+    .trim()
+    .notEmpty()
+    .withMessage("Verification token is required."),
+
+  body().custom((b) => {
+    const pw = b.newPassword || b.password;
+    if (!pw || String(pw).length < 6) {
+      throw new Error("New password must be at least 6 characters.");
+    }
+    return true;
+  }),
+];
+
+export const changePasswordValidator = [
+  body().custom((b) => {
+    const current = b.currentPassword || b.current;
+    const next = b.newPassword || b.next;
+    if (!current || !String(current).trim()) {
+      throw new Error("Current password is required.");
+    }
+    if (!next || String(next).length < 6) {
+      throw new Error("New password must be at least 6 characters.");
+    }
+    return true;
+  }),
+];
+
+/*
+|--------------------------------------------------------------------------
+| Profile & Shop Preferences Validation
+|--------------------------------------------------------------------------
+*/
+export const updateProfileValidator = [
+  body("email")
+    .optional()
+    .trim()
+    .isEmail()
+    .withMessage("Please provide a valid email address."),
+];
+
+export const updateShopValidator = [
+  body("darkMode")
+    .optional()
+    .isBoolean()
+    .withMessage("darkMode must be a boolean."),
+  body("language").optional().isString().trim(),
+  body("notifications")
+    .optional()
+    .isObject()
+    .withMessage("notifications must be an object."),
 ];

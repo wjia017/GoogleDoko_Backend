@@ -8,9 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import {
-  User,
-} from "./user.entity";
+import { User } from "./user.entity";
 
 export enum VendorStatus {
   PENDING = "pending",
@@ -24,15 +22,9 @@ export class VendorProfile {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  /**
-   * One vendor profile belongs to one user.
-   */
-  @OneToOne(
-    () => User,
-    {
-      onDelete: "CASCADE",
-    }
-  )
+  @OneToOne(() => User, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({
     name: "userId",
   })

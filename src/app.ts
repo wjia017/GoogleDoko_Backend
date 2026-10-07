@@ -1,57 +1,48 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import path from "path";
 
 import routes from "./routes";
-
-import {
-  sendSuccess,
-} from "./helpers/response.helper";
-
-import {
-  errorHandler,
-} from "./middleware/error.middleware";
+import { sendSuccess } from "./helpers/response.helper";
+import { errorHandler } from "./middleware/error.middleware";
 
 const app = express();
 
 app.use(
-  helmet()
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
 );
 
 app.use(
   cors({
     origin: true,
+    credentials: true,
   })
 );
 
-app.use(
-  express.json()
-);
+app.use(express.json({ limit: "10mb" }));
 
 app.use(
   express.urlencoded({
     extended: true,
+    limit: "10mb",
   })
 );
 
-app.get(
-  "/api/health",
-  (_req, res) => {
-    sendSuccess(
-      res,
-      200,
-      "GoogleDoko API is running."
-    );
-  }
-);
+// Static uploads directory
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-app.use(
-  "/api",
-  routes
-);
+app.get("/api/health", (_req, res) => {
+  sendSuccess(res, 200, "GoogleDoko API is running.", {
+    timestamp: new Date().toISOString(),
+    status: "healthy",
+  });
+});
 
-app.use(
-  errorHandler
-);
+app.use("/api", routes);
+
+app.use(errorHandler);
 
 export default app;
