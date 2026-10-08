@@ -28,7 +28,6 @@ let Vendor = class Vendor {
     status;
     settings;
     createdAt;
-    updatedAt;
 };
 exports.Vendor = Vendor;
 __decorate([
@@ -146,12 +145,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Vendor.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], Vendor.prototype, "updatedAt", void 0);
 exports.Vendor = Vendor = __decorate([
     (0, typeorm_1.Entity)("vendors")
 ], Vendor);

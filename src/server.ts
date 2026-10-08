@@ -6,7 +6,7 @@ dotenv.config();
 import app from "./app";
 import { appDataSource } from "./config/database";
 
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.PORT) || 4000;
 
 const startServer = async (): Promise<void> => {
   try {

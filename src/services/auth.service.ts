@@ -112,6 +112,9 @@ export class AuthService {
             phone: data.phone || "",
             addressLine: data.address,
             city: data.city || "Kathmandu",
+            district: data.city || "",
+            province: "",
+            postalCode: "",
             label: "Home",
           };
         } else {
@@ -139,12 +142,9 @@ export class AuthService {
       return createdUser;
     });
 
-    const token = generateToken({
-      userId: savedUser.id,
-      role: savedUser.role,
-    });
-
-    return await this.buildSessionResponse(savedUser.id, token);
+    return {
+      user: this.toSafeUser(savedUser),
+    };
   }
 
   /*
@@ -207,12 +207,13 @@ export class AuthService {
       return createdUser;
     });
 
-    const token = generateToken({
-      userId: savedUser.id,
-      role: savedUser.role,
+    const vendor = await vendorRepository.findOne({
+      where: { userId: savedUser.id },
     });
 
-    return await this.buildSessionResponse(savedUser.id, token);
+    return {
+      user: this.toSafeUser(savedUser, vendor),
+    };
   }
 
   /*
@@ -255,12 +256,9 @@ export class AuthService {
 
     const savedAdmin = await userRepository.save(admin);
 
-    const token = generateToken({
-      userId: savedAdmin.id,
-      role: savedAdmin.role,
-    });
-
-    return await this.buildSessionResponse(savedAdmin.id, token);
+    return {
+      user: this.toSafeUser(savedAdmin),
+    };
   }
 
   /*

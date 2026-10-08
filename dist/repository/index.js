@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.passwordResetRepository = exports.rewardLogRepository = exports.settingRepository = exports.subscriberRepository = exports.supportMessageRepository = exports.couponRepository = exports.reviewRepository = exports.wishlistRepository = exports.cartRepository = exports.orderRepository = exports.productRepository = exports.vendorProfileRepository = exports.vendorRepository = exports.addressRepository = exports.userRepository = void 0;
+exports.passwordResetRepository = exports.rewardLogRepository = exports.settingRepository = exports.subscriberRepository = exports.supportMessageRepository = exports.couponRepository = exports.reviewRepository = exports.wishlistRepository = exports.cartRepository = exports.orderRepository = exports.productRepository = exports.vendorRepository = exports.addressRepository = exports.userRepository = void 0;
 const database_1 = require("../config/database");
 const entities_1 = require("../entities");
 exports.userRepository = database_1.appDataSource.getRepository(entities_1.User);
 exports.addressRepository = database_1.appDataSource.getRepository(entities_1.Address);
 exports.vendorRepository = database_1.appDataSource.getRepository(entities_1.Vendor);
-exports.vendorProfileRepository = database_1.appDataSource.getRepository(entities_1.VendorProfile);
 exports.productRepository = database_1.appDataSource.getRepository(entities_1.Product);
 exports.orderRepository = database_1.appDataSource.getRepository(entities_1.Order);
 exports.cartRepository = database_1.appDataSource.getRepository(entities_1.Cart);

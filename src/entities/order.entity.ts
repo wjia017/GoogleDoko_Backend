@@ -114,9 +114,4 @@ export class Order {
     name: "created_at",
   })
   createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }

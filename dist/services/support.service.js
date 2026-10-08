@@ -4,13 +4,20 @@ exports.SupportService = void 0;
 const repository_1 = require("../repository");
 class SupportService {
     async submitInquiry(data) {
+        const extraInfo = [
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null,
+        ]
+            .filter(Boolean)
+            .join(" | ");
+        const inquiryText = extraInfo
+            ? `${data.inquiry}\n\n[Contact info: ${extraInfo}]`
+            : data.inquiry;
         const message = repository_1.supportMessageRepository.create({
             fullName: data.fullName,
             email: data.email,
-            phone: data.phone || "",
-            address: data.address || "",
             subject: data.subject || "Customer Inquiry",
-            inquiry: data.inquiry,
+            inquiry: inquiryText,
             status: "Open",
         });
         return await repository_1.supportMessageRepository.save(message);

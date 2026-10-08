@@ -26,7 +26,6 @@ let Address = class Address {
     user;
     userId;
     createdAt;
-    updatedAt;
 };
 exports.Address = Address;
 __decorate([
@@ -133,12 +132,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Address.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], Address.prototype, "updatedAt", void 0);
 exports.Address = Address = __decorate([
     (0, typeorm_1.Entity)("addresses")
 ], Address);

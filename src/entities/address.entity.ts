@@ -102,9 +102,4 @@ export class Address {
     name: "created_at",
   })
   createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }

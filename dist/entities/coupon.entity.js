@@ -22,7 +22,6 @@ let Coupon = class Coupon {
     expiryDate;
     active;
     createdAt;
-    updatedAt;
 };
 exports.Coupon = Coupon;
 __decorate([
@@ -99,12 +98,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Coupon.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], Coupon.prototype, "updatedAt", void 0);
 exports.Coupon = Coupon = __decorate([
     (0, typeorm_1.Entity)("coupons")
 ], Coupon);

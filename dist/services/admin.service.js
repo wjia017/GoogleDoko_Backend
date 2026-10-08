@@ -88,9 +88,19 @@ class AdminService {
         return { ok: true, status };
     }
     async getCoupons() {
-        return await repository_1.couponRepository.find({
+        const coupons = await repository_1.couponRepository.find({
             order: { createdAt: "DESC" },
         });
+        return coupons.map((c) => ({
+            ...c,
+            discount_type: c.discountType,
+            discount_value: c.discountValue,
+            min_order: c.minOrder,
+            max_uses: c.maxUses,
+            times_used: c.timesUsed,
+            expiry_date: c.expiryDate,
+            created_at: c.createdAt,
+        }));
     }
     async createCoupon(data) {
         const cleanCode = data.code.trim().toUpperCase();
@@ -181,8 +191,27 @@ class AdminService {
         await repository_1.productRepository.remove(product);
     }
     async getAllOrders() {
-        return await repository_1.orderRepository.find({
+        const orders = await repository_1.orderRepository.find({
             order: { createdAt: "DESC" },
+        });
+        return orders.map((o) => {
+            let items = [];
+            try {
+                items = typeof o.itemsJson === "string" ? JSON.parse(o.itemsJson) : (o.itemsJson || []);
+            }
+            catch {
+                items = [];
+            }
+            return {
+                ...o,
+                items,
+                delivery_address: o.deliveryAddress,
+                recipient_name: o.recipientName,
+                recipient_phone: o.recipientPhone,
+                payment_method: o.paymentMethod,
+                payment_status: o.paymentStatus,
+                delivery_fee: o.deliveryFee,
+            };
         });
     }
     async updateOrderStatus(id, status, paymentStatus) {

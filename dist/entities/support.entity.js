@@ -15,13 +15,10 @@ let SupportMessage = class SupportMessage {
     id;
     fullName;
     email;
-    phone;
-    address;
     subject;
     inquiry;
     status;
     createdAt;
-    updatedAt;
 };
 exports.SupportMessage = SupportMessage;
 __decorate([
@@ -32,7 +29,7 @@ __decorate([
     (0, typeorm_1.Column)({
         type: "varchar",
         length: 100,
-        name: "full_name",
+        name: "name",
         default: "",
     }),
     __metadata("design:type", String)
@@ -44,24 +41,6 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], SupportMessage.prototype, "email", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        type: "varchar",
-        length: 50,
-        default: "",
-        nullable: true,
-    }),
-    __metadata("design:type", String)
-], SupportMessage.prototype, "phone", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        type: "varchar",
-        length: 255,
-        default: "",
-        nullable: true,
-    }),
-    __metadata("design:type", String)
-], SupportMessage.prototype, "address", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: "varchar",
@@ -92,12 +71,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], SupportMessage.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], SupportMessage.prototype, "updatedAt", void 0);
 exports.SupportMessage = SupportMessage = __decorate([
     (0, typeorm_1.Entity)("support_messages")
 ], SupportMessage);

@@ -11,8 +11,9 @@ class AddressController {
     async create(req, res) {
         try {
             const userId = req.user.id;
-            const address = await address_service_1.default.createAddress(userId, req.body);
-            (0, response_helper_1.sendSuccess)(res, 201, message_helper_1.messages.address.created, { address });
+            await address_service_1.default.createAddress(userId, req.body);
+            const addresses = await address_service_1.default.getUserAddresses(userId);
+            (0, response_helper_1.sendSuccess)(res, 201, message_helper_1.messages.address.created, addresses);
         }
         catch (error) {
             console.error("Create address error:", error);
@@ -23,7 +24,7 @@ class AddressController {
         try {
             const userId = req.user.id;
             const addresses = await address_service_1.default.getUserAddresses(userId);
-            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.retrieved, { addresses });
+            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.retrieved, addresses);
         }
         catch (error) {
             console.error("Get addresses error:", error);
@@ -39,7 +40,7 @@ class AddressController {
                 (0, response_helper_1.sendError)(res, 404, message_helper_1.messages.address.notFound);
                 return;
             }
-            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.retrievedOne, { address });
+            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.retrievedOne, address);
         }
         catch (error) {
             console.error("Get address error:", error);
@@ -50,8 +51,9 @@ class AddressController {
         try {
             const userId = req.user.id;
             const addressId = Number(req.params.id);
-            const address = await address_service_1.default.updateAddress(userId, addressId, req.body);
-            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.updated, { address });
+            await address_service_1.default.updateAddress(userId, addressId, req.body);
+            const addresses = await address_service_1.default.getUserAddresses(userId);
+            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.updated, addresses);
         }
         catch (error) {
             if (error?.message === "ADDRESS_NOT_FOUND") {
@@ -65,8 +67,9 @@ class AddressController {
         try {
             const userId = req.user.id;
             const addressId = Number(req.params.id);
-            const address = await address_service_1.default.setDefaultAddress(userId, addressId);
-            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.defaultUpdated, { address });
+            await address_service_1.default.setDefaultAddress(userId, addressId);
+            const addresses = await address_service_1.default.getUserAddresses(userId);
+            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.defaultUpdated, addresses);
         }
         catch (error) {
             if (error?.message === "ADDRESS_NOT_FOUND") {
@@ -81,7 +84,8 @@ class AddressController {
             const userId = req.user.id;
             const addressId = Number(req.params.id);
             await address_service_1.default.deleteAddress(userId, addressId);
-            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.deleted);
+            const addresses = await address_service_1.default.getUserAddresses(userId);
+            (0, response_helper_1.sendSuccess)(res, 200, message_helper_1.messages.address.deleted, addresses);
         }
         catch (error) {
             if (error?.message === "ADDRESS_NOT_FOUND") {

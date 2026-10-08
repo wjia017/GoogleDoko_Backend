@@ -70,6 +70,9 @@ class AuthService {
                         phone: data.phone || "",
                         addressLine: data.address,
                         city: data.city || "Kathmandu",
+                        district: data.city || "",
+                        province: "",
+                        postalCode: "",
                         label: "Home",
                     };
                 }
@@ -94,11 +97,9 @@ class AuthService {
             }
             return createdUser;
         });
-        const token = (0, jwt_1.generateToken)({
-            userId: savedUser.id,
-            role: savedUser.role,
-        });
-        return await this.buildSessionResponse(savedUser.id, token);
+        return {
+            user: this.toSafeUser(savedUser),
+        };
     }
     /*
     |--------------------------------------------------------------------------
@@ -150,11 +151,12 @@ class AuthService {
             await txVendorRepo.save(vendor);
             return createdUser;
         });
-        const token = (0, jwt_1.generateToken)({
-            userId: savedUser.id,
-            role: savedUser.role,
+        const vendor = await repository_1.vendorRepository.findOne({
+            where: { userId: savedUser.id },
         });
-        return await this.buildSessionResponse(savedUser.id, token);
+        return {
+            user: this.toSafeUser(savedUser, vendor),
+        };
     }
     /*
     |--------------------------------------------------------------------------
@@ -189,11 +191,9 @@ class AuthService {
             referralCode: "ADMIN",
         });
         const savedAdmin = await repository_1.userRepository.save(admin);
-        const token = (0, jwt_1.generateToken)({
-            userId: savedAdmin.id,
-            role: savedAdmin.role,
-        });
-        return await this.buildSessionResponse(savedAdmin.id, token);
+        return {
+            user: this.toSafeUser(savedAdmin),
+        };
     }
     /*
     |--------------------------------------------------------------------------
