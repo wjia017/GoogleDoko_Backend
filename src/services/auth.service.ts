@@ -45,6 +45,8 @@ import {
 import {
   generateToken,
 } from "../utils/jwt";
+import cartService from "./cart.service";
+import wishlistService from "./wishlist.service";
 
 export class AuthService {
   /*
@@ -341,14 +343,8 @@ export class AuthService {
         where: { userId },
         order: { isDefault: "DESC", createdAt: "DESC" },
       }),
-      cartRepository.find({
-        where: { userId },
-        order: { addedAt: "DESC" },
-      }),
-      wishlistRepository.find({
-        where: { userId },
-        order: { addedAt: "DESC" },
-      }),
+      cartService.getCart(userId),
+      wishlistService.getWishlist(userId),
       orderRepository.find({
         where: { userId },
         order: { createdAt: "DESC" },

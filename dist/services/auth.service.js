@@ -12,6 +12,8 @@ const vendor_entity_1 = require("../entities/vendor.entity");
 const database_1 = require("../config/database");
 const repository_1 = require("../repository");
 const jwt_1 = require("../utils/jwt");
+const cart_service_1 = __importDefault(require("./cart.service"));
+const wishlist_service_1 = __importDefault(require("./wishlist.service"));
 class AuthService {
     /*
     |--------------------------------------------------------------------------
@@ -260,14 +262,8 @@ class AuthService {
                 where: { userId },
                 order: { isDefault: "DESC", createdAt: "DESC" },
             }),
-            repository_1.cartRepository.find({
-                where: { userId },
-                order: { addedAt: "DESC" },
-            }),
-            repository_1.wishlistRepository.find({
-                where: { userId },
-                order: { addedAt: "DESC" },
-            }),
+            cart_service_1.default.getCart(userId),
+            wishlist_service_1.default.getWishlist(userId),
             repository_1.orderRepository.find({
                 where: { userId },
                 order: { createdAt: "DESC" },

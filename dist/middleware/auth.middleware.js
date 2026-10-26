@@ -18,8 +18,13 @@ const authenticate = (req, res, next) => {
     }
     try {
         const payload = (0, jwt_1.verifyToken)(token);
+        const userId = payload.userId || payload.id;
+        if (!userId) {
+            (0, response_helper_1.sendError)(res, 401, message_helper_1.messages.auth.authenticationRequired);
+            return;
+        }
         req.user = {
-            id: payload.userId,
+            id: Number(userId),
             role: payload.role,
         };
         next();

@@ -47,7 +47,7 @@ const createAdmin = async (): Promise<void> => {
       console.error("Unable to create admin account.");
       console.error("----------------------------------------");
       console.error(
-        `The email ${email} is already registered as a ${existingUser.role}.`
+        `The email ${email} is already registered as a ${existingUser.role}.`,
       );
       console.error("Please use a different email address.");
       return;

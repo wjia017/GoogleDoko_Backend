@@ -47,10 +47,16 @@ export const authenticate = (
   }
 
   try {
-    const payload = verifyToken(token);
+    const payload = verifyToken(token) as any;
+    const userId = payload.userId || payload.id;
+
+    if (!userId) {
+      sendError(res, 401, messages.auth.authenticationRequired);
+      return;
+    }
 
     req.user = {
-      id: payload.userId,
+      id: Number(userId),
       role: payload.role,
     };
 
