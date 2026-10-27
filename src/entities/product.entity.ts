@@ -100,9 +100,4 @@ export class Product {
     name: "created_at",
   })
   createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }

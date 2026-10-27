@@ -71,9 +71,4 @@ export class Coupon {
     name: "created_at",
   })
   createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }

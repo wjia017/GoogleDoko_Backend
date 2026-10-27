@@ -125,10 +125,20 @@ export class AdminService {
     return { ok: true, status };
   }
 
-  async getCoupons(): Promise<Coupon[]> {
-    return await couponRepository.find({
+  async getCoupons(): Promise<any[]> {
+    const coupons = await couponRepository.find({
       order: { createdAt: "DESC" },
     });
+    return coupons.map((c) => ({
+      ...c,
+      discount_type: c.discountType,
+      discount_value: c.discountValue,
+      min_order: c.minOrder,
+      max_uses: c.maxUses,
+      times_used: c.timesUsed,
+      expiry_date: c.expiryDate,
+      created_at: c.createdAt,
+    }));
   }
 
   async createCoupon(data: {
@@ -252,9 +262,27 @@ export class AdminService {
     await productRepository.remove(product);
   }
 
-  async getAllOrders(): Promise<Order[]> {
-    return await orderRepository.find({
+  async getAllOrders(): Promise<any[]> {
+    const orders = await orderRepository.find({
       order: { createdAt: "DESC" },
+    });
+    return orders.map((o) => {
+      let items = [];
+      try {
+        items = typeof o.itemsJson === "string" ? JSON.parse(o.itemsJson) : (o.itemsJson || []);
+      } catch {
+        items = [];
+      }
+      return {
+        ...o,
+        items,
+        delivery_address: o.deliveryAddress,
+        recipient_name: o.recipientName,
+        recipient_phone: o.recipientPhone,
+        payment_method: o.paymentMethod,
+        payment_status: o.paymentStatus,
+        delivery_fee: o.deliveryFee,
+      };
     });
   }
 

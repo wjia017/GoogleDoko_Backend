@@ -1,14 +1,28 @@
+import { In } from "typeorm";
 import { wishlistRepository, productRepository } from "../repository";
 
 export interface EnrichedWishlistItem {
-  userId: number;
+  id: string;
   productId: string;
+  userId: number;
+  name: string;
+  category: string;
+  weight: string;
+  price: number;
+  rating: number;
+  sold: string;
+  origin: string;
+  seller: string;
+  image: string;
+  gallery: string[];
   addedAt: Date;
   product?: any;
 }
 
 export class WishlistService {
   async getWishlist(userId: number): Promise<EnrichedWishlistItem[]> {
+    if (!userId) return [];
+
     const wishlistItems = await wishlistRepository.find({
       where: { userId },
       order: { addedAt: "DESC" },
@@ -17,17 +31,32 @@ export class WishlistService {
     if (wishlistItems.length === 0) return [];
 
     const productIds = wishlistItems.map((item) => item.productId);
-    const products = await productRepository.findByIds(productIds);
+    const products =
+      productIds.length > 0
+        ? await productRepository.find({ where: { id: In(productIds) } })
+        : [];
     const productMap = new Map(products.map((p) => [p.id, p]));
 
-    return wishlistItems.map((item) => ({
-      userId: item.userId,
-      productId: item.productId,
-      addedAt: item.addedAt,
-      ...(productMap.get(item.productId)
-        ? { product: productMap.get(item.productId) }
-        : {}),
-    }));
+    return wishlistItems.map((item) => {
+      const product = productMap.get(item.productId);
+      return {
+        id: String(item.productId),
+        productId: String(item.productId),
+        userId: item.userId,
+        name: product?.name || "Product",
+        category: product?.category || "",
+        weight: product?.weight || "1 kg",
+        price: Number(product?.price || 0),
+        rating: Number(product?.rating || 5),
+        sold: product?.sold || "0",
+        origin: product?.origin || "",
+        seller: product?.seller || "",
+        image: product?.image || "",
+        gallery: product?.image ? [product.image] : [],
+        addedAt: item.addedAt,
+        ...(product ? { product } : {}),
+      };
+    });
   }
 
   async addToWishlist(

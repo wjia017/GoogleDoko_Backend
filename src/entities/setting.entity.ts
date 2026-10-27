@@ -17,9 +17,4 @@ export class PlatformSetting {
     type: "text",
   })
   value!: string;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }

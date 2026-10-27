@@ -45,6 +45,8 @@ import {
 import {
   generateToken,
 } from "../utils/jwt";
+import cartService from "./cart.service";
+import wishlistService from "./wishlist.service";
 
 export class AuthService {
   /*
@@ -112,6 +114,9 @@ export class AuthService {
             phone: data.phone || "",
             addressLine: data.address,
             city: data.city || "Kathmandu",
+            district: data.city || "",
+            province: "",
+            postalCode: "",
             label: "Home",
           };
         } else {
@@ -139,12 +144,9 @@ export class AuthService {
       return createdUser;
     });
 
-    const token = generateToken({
-      userId: savedUser.id,
-      role: savedUser.role,
-    });
-
-    return await this.buildSessionResponse(savedUser.id, token);
+    return {
+      user: this.toSafeUser(savedUser),
+    };
   }
 
   /*
@@ -207,12 +209,13 @@ export class AuthService {
       return createdUser;
     });
 
-    const token = generateToken({
-      userId: savedUser.id,
-      role: savedUser.role,
+    const vendor = await vendorRepository.findOne({
+      where: { userId: savedUser.id },
     });
 
-    return await this.buildSessionResponse(savedUser.id, token);
+    return {
+      user: this.toSafeUser(savedUser, vendor),
+    };
   }
 
   /*
@@ -255,12 +258,9 @@ export class AuthService {
 
     const savedAdmin = await userRepository.save(admin);
 
-    const token = generateToken({
-      userId: savedAdmin.id,
-      role: savedAdmin.role,
-    });
-
-    return await this.buildSessionResponse(savedAdmin.id, token);
+    return {
+      user: this.toSafeUser(savedAdmin),
+    };
   }
 
   /*
@@ -343,14 +343,8 @@ export class AuthService {
         where: { userId },
         order: { isDefault: "DESC", createdAt: "DESC" },
       }),
-      cartRepository.find({
-        where: { userId },
-        order: { addedAt: "DESC" },
-      }),
-      wishlistRepository.find({
-        where: { userId },
-        order: { addedAt: "DESC" },
-      }),
+      cartService.getCart(userId),
+      wishlistService.getWishlist(userId),
       orderRepository.find({
         where: { userId },
         order: { createdAt: "DESC" },

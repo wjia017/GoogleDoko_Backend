@@ -30,44 +30,31 @@ router.post(
   "/register",
   registerValidator,
   validateRequest,
-  authController.register
+  authController.register,
 );
 
 // Login
-router.post(
-  "/login",
-  loginValidator,
-  validateRequest,
-  authController.login
-);
+router.post("/login", loginValidator, validateRequest, authController.login);
 
 // Get currently logged-in user profile & session
-router.get(
-  "/me",
-  authenticate,
-  authController.getMe
-);
+router.get("/me", authenticate, authController.getMe);
 
 // Logout
-router.post(
-  "/logout",
-  authenticate,
-  authController.logout
-);
+router.post("/logout", authenticate, authController.logout);
 
 // Password recovery
 router.post(
   "/forgot",
   forgotPasswordValidator,
   validateRequest,
-  authController.forgotPassword
+  authController.forgotPassword,
 );
 
 router.post(
   "/reset",
   resetPasswordValidator,
   validateRequest,
-  authController.resetPassword
+  authController.resetPassword,
 );
 
 // Profile and Password updates
@@ -76,7 +63,7 @@ router.put(
   authenticate,
   updateProfileValidator,
   validateRequest,
-  authController.updateProfile
+  authController.updateProfile,
 );
 
 router.put(
@@ -84,7 +71,7 @@ router.put(
   authenticate,
   changePasswordValidator,
   validateRequest,
-  authController.changePassword
+  authController.changePassword,
 );
 
 // Shop settings
@@ -93,7 +80,7 @@ router.put(
   authenticate,
   updateShopValidator,
   validateRequest,
-  authController.updateShop
+  authController.updateShop,
 );
 
 // Profile photo upload
@@ -101,7 +88,7 @@ router.post(
   "/photo",
   authenticate,
   upload.single("photo"),
-  authController.uploadProfilePhoto
+  authController.uploadProfilePhoto,
 );
 
 /*
@@ -114,14 +101,14 @@ router.post(
   "/vendor/register",
   registerVendorValidator,
   validateRequest,
-  authController.registerVendor
+  authController.registerVendor,
 );
 
 router.post(
   "/register-vendor",
   registerVendorValidator,
   validateRequest,
-  authController.registerVendor
+  authController.registerVendor,
 );
 
 /*
@@ -134,7 +121,7 @@ router.post(
   "/register-admin",
   registerAdminValidator,
   validateRequest,
-  authController.registerAdmin
+  authController.registerAdmin,
 );
 
 export default router;

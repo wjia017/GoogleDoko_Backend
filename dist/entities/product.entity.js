@@ -27,7 +27,6 @@ let Product = class Product {
     active;
     description;
     createdAt;
-    updatedAt;
 };
 exports.Product = Product;
 __decorate([
@@ -138,12 +137,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Product.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], Product.prototype, "updatedAt", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)("products")
 ], Product);

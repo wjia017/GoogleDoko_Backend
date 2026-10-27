@@ -73,7 +73,7 @@ export interface SafeUser {
 
 export interface AuthResponse {
   user: SafeUser;
-  token: string;
+  token?: string;
   addresses?: any[];
   cart?: any[];
   wishlist?: any[];

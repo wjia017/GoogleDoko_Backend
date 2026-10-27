@@ -9,6 +9,13 @@ import {
 const router = Router();
 
 router.post(
+  "/",
+  supportInquiryValidator,
+  validateRequest,
+  supportController.submitContact
+);
+
+router.post(
   "/contact",
   supportInquiryValidator,
   validateRequest,

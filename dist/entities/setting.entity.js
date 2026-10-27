@@ -14,7 +14,6 @@ const typeorm_1 = require("typeorm");
 let PlatformSetting = class PlatformSetting {
     key;
     value;
-    updatedAt;
 };
 exports.PlatformSetting = PlatformSetting;
 __decorate([
@@ -30,12 +29,6 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], PlatformSetting.prototype, "value", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], PlatformSetting.prototype, "updatedAt", void 0);
 exports.PlatformSetting = PlatformSetting = __decorate([
     (0, typeorm_1.Entity)("platform_settings")
 ], PlatformSetting);

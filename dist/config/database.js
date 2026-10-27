@@ -57,7 +57,6 @@ exports.appDataSource = new typeorm_1.DataSource({
         entities_1.User,
         entities_1.Address,
         entities_1.Vendor,
-        entities_1.VendorProfile,
         entities_1.Product,
         entities_1.Order,
         entities_1.Cart,

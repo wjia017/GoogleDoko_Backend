@@ -12,6 +12,8 @@ const vendor_entity_1 = require("../entities/vendor.entity");
 const database_1 = require("../config/database");
 const repository_1 = require("../repository");
 const jwt_1 = require("../utils/jwt");
+const cart_service_1 = __importDefault(require("./cart.service"));
+const wishlist_service_1 = __importDefault(require("./wishlist.service"));
 class AuthService {
     /*
     |--------------------------------------------------------------------------
@@ -70,6 +72,9 @@ class AuthService {
                         phone: data.phone || "",
                         addressLine: data.address,
                         city: data.city || "Kathmandu",
+                        district: data.city || "",
+                        province: "",
+                        postalCode: "",
                         label: "Home",
                     };
                 }
@@ -94,11 +99,9 @@ class AuthService {
             }
             return createdUser;
         });
-        const token = (0, jwt_1.generateToken)({
-            userId: savedUser.id,
-            role: savedUser.role,
-        });
-        return await this.buildSessionResponse(savedUser.id, token);
+        return {
+            user: this.toSafeUser(savedUser),
+        };
     }
     /*
     |--------------------------------------------------------------------------
@@ -150,11 +153,12 @@ class AuthService {
             await txVendorRepo.save(vendor);
             return createdUser;
         });
-        const token = (0, jwt_1.generateToken)({
-            userId: savedUser.id,
-            role: savedUser.role,
+        const vendor = await repository_1.vendorRepository.findOne({
+            where: { userId: savedUser.id },
         });
-        return await this.buildSessionResponse(savedUser.id, token);
+        return {
+            user: this.toSafeUser(savedUser, vendor),
+        };
     }
     /*
     |--------------------------------------------------------------------------
@@ -189,11 +193,9 @@ class AuthService {
             referralCode: "ADMIN",
         });
         const savedAdmin = await repository_1.userRepository.save(admin);
-        const token = (0, jwt_1.generateToken)({
-            userId: savedAdmin.id,
-            role: savedAdmin.role,
-        });
-        return await this.buildSessionResponse(savedAdmin.id, token);
+        return {
+            user: this.toSafeUser(savedAdmin),
+        };
     }
     /*
     |--------------------------------------------------------------------------
@@ -260,14 +262,8 @@ class AuthService {
                 where: { userId },
                 order: { isDefault: "DESC", createdAt: "DESC" },
             }),
-            repository_1.cartRepository.find({
-                where: { userId },
-                order: { addedAt: "DESC" },
-            }),
-            repository_1.wishlistRepository.find({
-                where: { userId },
-                order: { addedAt: "DESC" },
-            }),
+            cart_service_1.default.getCart(userId),
+            wishlist_service_1.default.getWishlist(userId),
             repository_1.orderRepository.find({
                 where: { userId },
                 order: { createdAt: "DESC" },

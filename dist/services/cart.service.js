@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartService = void 0;
+const typeorm_1 = require("typeorm");
 const repository_1 = require("../repository");
 class CartService {
     async getCart(userId) {
+        if (!userId)
+            return [];
         const cartItems = await repository_1.cartRepository.find({
             where: { userId },
             order: { addedAt: "DESC" },
@@ -11,14 +14,23 @@ class CartService {
         if (cartItems.length === 0)
             return [];
         const productIds = cartItems.map((item) => item.productId);
-        const products = await repository_1.productRepository.findByIds(productIds);
+        const products = productIds.length > 0
+            ? await repository_1.productRepository.find({ where: { id: (0, typeorm_1.In)(productIds) } })
+            : [];
         const productMap = new Map(products.map((p) => [p.id, p]));
         return cartItems.map((item) => {
             const product = productMap.get(item.productId);
             return {
+                id: String(item.productId),
+                productId: String(item.productId),
                 userId: item.userId,
-                productId: item.productId,
+                name: product?.name || "Product",
+                weight: product?.weight || "1 kg",
+                price: Number(product?.price || 0),
                 quantity: item.quantity,
+                image: product?.image || "",
+                origin: product?.origin || "",
+                seller: product?.seller || "",
                 addedAt: item.addedAt,
                 ...(product ? { product } : {}),
             };

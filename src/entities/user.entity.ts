@@ -116,11 +116,6 @@ export class User {
   })
   createdAt!: Date;
 
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
-
   @OneToMany(() => Address, (address) => address.user)
   addresses!: Address[];
 }

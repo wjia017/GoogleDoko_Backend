@@ -29,7 +29,6 @@ let Order = class Order {
     recipientPhone;
     itemsJson;
     createdAt;
-    updatedAt;
 };
 exports.Order = Order;
 __decorate([
@@ -151,12 +150,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Order.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], Order.prototype, "updatedAt", void 0);
 exports.Order = Order = __decorate([
     (0, typeorm_1.Entity)("orders")
 ], Order);

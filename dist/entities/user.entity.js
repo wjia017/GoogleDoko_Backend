@@ -33,7 +33,6 @@ let User = class User {
     photo;
     shopJson;
     createdAt;
-    updatedAt;
     addresses;
 };
 exports.User = User;
@@ -150,12 +149,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.UpdateDateColumn)({
-        nullable: true,
-    }),
-    __metadata("design:type", Date)
-], User.prototype, "updatedAt", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => address_entity_1.Address, (address) => address.user),
     __metadata("design:type", Array)

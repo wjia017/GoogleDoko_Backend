@@ -7,8 +7,9 @@ export class AddressController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.user!.id;
-      const address = await addressService.createAddress(userId, req.body);
-      sendSuccess(res, 201, messages.address.created, { address });
+      await addressService.createAddress(userId, req.body);
+      const addresses = await addressService.getUserAddresses(userId);
+      sendSuccess(res, 201, messages.address.created, addresses);
     } catch (error) {
       console.error("Create address error:", error);
       sendError(res, 500, messages.common.internalServerError);
@@ -19,7 +20,7 @@ export class AddressController {
     try {
       const userId = req.user!.id;
       const addresses = await addressService.getUserAddresses(userId);
-      sendSuccess(res, 200, messages.address.retrieved, { addresses });
+      sendSuccess(res, 200, messages.address.retrieved, addresses);
     } catch (error) {
       console.error("Get addresses error:", error);
       sendError(res, 500, messages.common.internalServerError);
@@ -37,7 +38,7 @@ export class AddressController {
         return;
       }
 
-      sendSuccess(res, 200, messages.address.retrievedOne, { address });
+      sendSuccess(res, 200, messages.address.retrievedOne, address);
     } catch (error) {
       console.error("Get address error:", error);
       sendError(res, 500, messages.common.internalServerError);
@@ -48,8 +49,9 @@ export class AddressController {
     try {
       const userId = req.user!.id;
       const addressId = Number(req.params.id);
-      const address = await addressService.updateAddress(userId, addressId, req.body);
-      sendSuccess(res, 200, messages.address.updated, { address });
+      await addressService.updateAddress(userId, addressId, req.body);
+      const addresses = await addressService.getUserAddresses(userId);
+      sendSuccess(res, 200, messages.address.updated, addresses);
     } catch (error: any) {
       if (error?.message === "ADDRESS_NOT_FOUND") {
         sendError(res, 404, messages.address.notFound);
@@ -63,8 +65,9 @@ export class AddressController {
     try {
       const userId = req.user!.id;
       const addressId = Number(req.params.id);
-      const address = await addressService.setDefaultAddress(userId, addressId);
-      sendSuccess(res, 200, messages.address.defaultUpdated, { address });
+      await addressService.setDefaultAddress(userId, addressId);
+      const addresses = await addressService.getUserAddresses(userId);
+      sendSuccess(res, 200, messages.address.defaultUpdated, addresses);
     } catch (error: any) {
       if (error?.message === "ADDRESS_NOT_FOUND") {
         sendError(res, 404, messages.address.notFound);
@@ -79,7 +82,8 @@ export class AddressController {
       const userId = req.user!.id;
       const addressId = Number(req.params.id);
       await addressService.deleteAddress(userId, addressId);
-      sendSuccess(res, 200, messages.address.deleted);
+      const addresses = await addressService.getUserAddresses(userId);
+      sendSuccess(res, 200, messages.address.deleted, addresses);
     } catch (error: any) {
       if (error?.message === "ADDRESS_NOT_FOUND") {
         sendError(res, 404, messages.address.notFound);

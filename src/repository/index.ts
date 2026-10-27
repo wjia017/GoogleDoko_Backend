@@ -4,7 +4,6 @@ import {
   User,
   Address,
   Vendor,
-  VendorProfile,
   Product,
   Order,
   Cart,
@@ -23,8 +22,6 @@ export const userRepository = appDataSource.getRepository(User);
 export const addressRepository = appDataSource.getRepository(Address);
 
 export const vendorRepository = appDataSource.getRepository(Vendor);
-
-export const vendorProfileRepository = appDataSource.getRepository(VendorProfile);
 
 export const productRepository = appDataSource.getRepository(Product);
 

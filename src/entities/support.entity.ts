@@ -15,7 +15,7 @@ export class SupportMessage {
   @Column({
     type: "varchar",
     length: 100,
-    name: "full_name",
+    name: "name",
     default: "",
   })
   fullName!: string;
@@ -25,22 +25,6 @@ export class SupportMessage {
     length: 255,
   })
   email!: string;
-
-  @Column({
-    type: "varchar",
-    length: 50,
-    default: "",
-    nullable: true,
-  })
-  phone!: string;
-
-  @Column({
-    type: "varchar",
-    length: 255,
-    default: "",
-    nullable: true,
-  })
-  address!: string;
 
   @Column({
     type: "varchar",
@@ -67,11 +51,6 @@ export class SupportMessage {
     name: "created_at",
   })
   createdAt!: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt!: Date;
 }
 
 @Entity("subscribers")

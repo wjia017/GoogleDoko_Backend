@@ -1,16 +1,26 @@
+import { In } from "typeorm";
 import { cartRepository, productRepository } from "../repository";
 import { Cart } from "../entities/cart.entity";
 
 export interface EnrichedCartItem {
-  userId: number;
+  id: string;
   productId: string;
+  userId: number;
+  name: string;
+  weight: string;
+  price: number;
   quantity: number;
+  image: string;
+  origin?: string;
+  seller?: string;
   addedAt: Date;
   product?: any;
 }
 
 export class CartService {
   async getCart(userId: number): Promise<EnrichedCartItem[]> {
+    if (!userId) return [];
+
     const cartItems = await cartRepository.find({
       where: { userId },
       order: { addedAt: "DESC" },
@@ -19,15 +29,25 @@ export class CartService {
     if (cartItems.length === 0) return [];
 
     const productIds = cartItems.map((item) => item.productId);
-    const products = await productRepository.findByIds(productIds);
+    const products =
+      productIds.length > 0
+        ? await productRepository.find({ where: { id: In(productIds) } })
+        : [];
     const productMap = new Map(products.map((p) => [p.id, p]));
 
     return cartItems.map((item) => {
       const product = productMap.get(item.productId);
       return {
+        id: String(item.productId),
+        productId: String(item.productId),
         userId: item.userId,
-        productId: item.productId,
+        name: product?.name || "Product",
+        weight: product?.weight || "1 kg",
+        price: Number(product?.price || 0),
         quantity: item.quantity,
+        image: product?.image || "",
+        origin: product?.origin || "",
+        seller: product?.seller || "",
         addedAt: item.addedAt,
         ...(product ? { product } : {}),
       };
